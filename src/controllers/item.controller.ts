@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ItemService } from '../services/item.service';
 import { CriarItemInput, AtualizarItemInput } from '../schemas/CardapioSchema';
+import { CategoriaService } from '../services/categoria.service';
 
 export class ItemController {
   
@@ -30,12 +31,17 @@ export class ItemController {
     return reply.send(item);
   }
 
-  update = async (request: FastifyRequest<{ Params: { id: string }, Body: AtualizarItemInput }>, reply: FastifyReply) => {
-    const service = new ItemService();
+update = async (request: FastifyRequest<{ Params: { id: string }, Body: any }>, reply: FastifyReply) => {
+    const service = new CategoriaService();
     const { id } = request.params;
     
-    const itemAtualizado = await service.update(id, request.body);
-    return reply.send(itemAtualizado);
+    const categoriaAtualizada = await service.update(id, request.body as any);
+
+    if (!categoriaAtualizada) {
+        return reply.status(404).send({ message: 'Categoria não encontrada' });
+    }
+
+    return reply.send(categoriaAtualizada);
   }
 
   delete = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {

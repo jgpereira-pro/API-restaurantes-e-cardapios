@@ -17,11 +17,16 @@ export class CategoriaController {
     return reply.send(categorias);
   }
 
-  update = async (request: FastifyRequest<{ Params: { id: string }, Body: AtualizarCategoriaInput }>, reply: FastifyReply) => {
+  update = async (request: FastifyRequest<{ Params: { id: string }, Body: any }>, reply: FastifyReply) => {
     const service = new CategoriaService();
     const { id } = request.params;
     
-    const categoriaAtualizada = await service.update(id, request.body);
+    const categoriaAtualizada = await service.update(id, request.body as any);
+
+    if (!categoriaAtualizada) {
+        return reply.status(404).send({ message: 'Categoria não encontrada' });
+    }
+
     return reply.send(categoriaAtualizada);
   }
 

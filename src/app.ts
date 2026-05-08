@@ -5,12 +5,17 @@ import { serializerCompiler, validatorCompiler, jsonSchemaTransform, ZodTypeProv
 import { restauranteRoutes } from './routes/restauranteRoutes';
 import { categoriaRoutes } from './routes/categoriaRoutes';
 import { itemRoutes } from './routes/itemRoutes';
+import fastifyJwt from '@fastify/jwt';
 
 export const buildApp = async () => {
-  const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
+  const app = fastify().withTypeProvider<ZodTypeProvider>();
 
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
+
+  if (!process.env.JWT_SECRET) {
+    throw new Error("⚠️ JWT_SECRET não foi encontrado no ficheiro .env");
+  }
 
   await app.register(swagger, {
     openapi: {
