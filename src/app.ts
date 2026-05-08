@@ -1,19 +1,25 @@
 import fastify from 'fastify';
 import swagger from '@fastify/swagger';
-import apiReference from '@scalar/fastify-api-reference'; 
+import apiReference from '@scalar/fastify-api-reference';
+import { serializerCompiler, validatorCompiler, jsonSchemaTransform, ZodTypeProvider } from "fastify-type-provider-zod";
 import { restauranteRoutes } from './routes/restauranteRoutes';
+import { categoriaRoutes } from './routes/categoriaRoutes';
+import { itemRoutes } from './routes/itemRoutes';
 
 export const buildApp = async () => {
-  const app = fastify({ logger: true });
+  const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
+
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
   await app.register(swagger, {
     openapi: {
       info: {
         title: 'API Restaurantes e Cardápios',
-        description: 'Microsserviço de gestão de catálogo',
         version: '1.0.0',
       },
-    }
+    },
+    transform: jsonSchemaTransform,
   });
 
   await app.register(apiReference, {
@@ -21,19 +27,8 @@ export const buildApp = async () => {
   });
 
   app.register(restauranteRoutes, { prefix: '/api' });
-
-  app.get('/health', async (request, reply) => {
-    return { status: 'UP', timestamp: new Date().toISOString() };
-  });
-
-  app.setErrorHandler((error: any, request, reply) => {
-    app.log.error(error);
-    reply.status(error.statusCode || 500).send({
-      error: error.name,
-      message: error.message,
-      statusCode: error.statusCode || 500
-    });
-  });
+  app.register(categoriaRoutes, { prefix: '/api' });
+  app.register(itemRoutes, { prefix: '/api' });
 
   return app;
 };
