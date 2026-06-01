@@ -8,6 +8,12 @@ export const criarRestauranteSchema = z.object({
   endereco_bairro: z.string(),
   endereco_cidade: z.string(),
   endereco_cep: z.string().length(8, "O CEP deve ter 8 dígitos"),
+  tipo:      z.string().optional(),
+  descricao: z.string().optional(),
+  telefone:  z.string().optional(),
+  imagem:    z.string().optional(),
+  capa:      z.string().optional(),
+  status:    z.enum(['ABERTO', 'FECHADO', 'INATIVO']).optional(),
 });
 
 export const idParamSchema = z.object({

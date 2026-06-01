@@ -22,6 +22,7 @@ export const criarItemSchema = z.object({
     .int("O preço deve ser um número inteiro (em centavos)")
     .nonnegative("O preço não pode ser negativo"),
   disponivel: z.boolean().optional().default(true),
+  imagem: z.string().optional(),
 });
 
 export const atualizarItemSchema = criarItemSchema.partial();

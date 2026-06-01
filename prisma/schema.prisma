@@ -11,9 +11,14 @@ model Restaurante {
   id                  String                @id @default(uuid()) @db.Char(36)
   nome                String                @db.VarChar(150)
   cnpj                String                @unique(map: "cnpj") @db.VarChar(14)
-  email               String                @unique @db.VarChar(150)
-  senha               String                @db.VarChar(255)
+  email               String?               @unique @db.VarChar(150)
+  senha               String?               @db.VarChar(255)
   status              restaurantes_status   @default(FECHADO)
+  tipo                String?               @db.VarChar(100)
+  descricao           String?               @db.Text
+  telefone            String?               @db.VarChar(20)
+  imagem              String?               @db.LongText
+  capa                String?               @db.LongText
   endereco_logradouro String                @db.VarChar(200)
   endereco_numero     String                @db.VarChar(20)
   endereco_bairro     String                @db.VarChar(100)
@@ -34,6 +39,7 @@ model ItemCardapio {
   descricao           String?             @db.Text
   preco_centavos      Int
   disponivel          Boolean             @default(true)
+  imagem              String?             @db.LongText
   categorias_cardapio categorias_cardapio @relation(fields: [categoria_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_item_categoria")
 
   @@index([categoria_id], map: "idx_itens_categoria_id")
